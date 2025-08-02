@@ -29,25 +29,42 @@ client.on('messageCreate', message => {
 
 // Slash command interaction
 client.on('interactionCreate', async interaction => {
-  if (!interaction.isCommand()) return;
+  if (!interaction.isChatInputCommand()) return;
+  
   const command = client.commands.get(interaction.commandName);
-  if (command) {
-    try {
-      // Handle new format (data property with execute method)
-      if (command.execute) {
-        await command.execute(interaction);
-      }
-      // Handle old format (executeSlash method)
-      else if (command.executeSlash) {
-        await command.executeSlash(interaction);
-      }
-      // Handle kick.js format (run method)
-      else if (command.run) {
-        await command.run(client, interaction);
-      }
-    } catch (error) {
-      console.error(error);
-      await interaction.reply({ content: '❌ There was an error.', ephemeral: true });
+  if (!command) {
+    console.log(`No command matching ${interaction.commandName} was found.`);
+    return;
+  }
+
+  try {
+    console.log(`Executing command: ${interaction.commandName}`);
+    
+    // Handle new format (data property with execute method)
+    if (command.execute) {
+      await command.execute(interaction);
+    }
+    // Handle old format (executeSlash method)
+    else if (command.executeSlash) {
+      await command.executeSlash(interaction);
+    }
+    // Handle kick.js format (run method)
+    else if (command.run) {
+      await command.run(client, interaction);
+    }
+    else {
+      console.log(`Command ${interaction.commandName} has no execute method.`);
+      await interaction.reply({ content: '❌ Command not properly configured.', ephemeral: true });
+    }
+  } catch (error) {
+    console.error(`Error executing ${interaction.commandName}:`, error);
+    
+    const errorResponse = { content: '❌ There was an error executing this command!', ephemeral: true };
+    
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp(errorResponse);
+    } else {
+      await interaction.reply(errorResponse);
     }
   }
 });

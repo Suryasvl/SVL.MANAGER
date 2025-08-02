@@ -29,6 +29,16 @@ for (const file of commandFiles) {
           .setName(option.name)
           .setDescription(option.description)
           .setRequired(option.required || false));
+      } else if (option.type === 3) { // STRING type
+        slashCommand.addStringOption(opt => opt
+          .setName(option.name)
+          .setDescription(option.description)
+          .setRequired(option.required || false));
+      } else if (option.type === 4) { // INTEGER type
+        slashCommand.addIntegerOption(opt => opt
+          .setName(option.name)
+          .setDescription(option.description)
+          .setRequired(option.required || false));
       }
     }
     
