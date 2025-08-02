@@ -12,6 +12,12 @@ const commandFiles = fs.readdirSync('./').filter(file => file.endsWith('.js') &&
 for (const file of commandFiles) {
   const command = require(`./${file}`);
   
+  // Skip empty files
+  if (Object.keys(command).length === 0) {
+    console.log(`Skipping empty file: ${file}`);
+    continue;
+  }
+  
   // Handle new format (SlashCommandBuilder)
   if (command.data) {
     commands.push(command.data.toJSON());

@@ -9,10 +9,18 @@ const client = new Client({
 client.commands = new Collection();
 
 // Load all commands
-const commandFiles = fs.readdirSync('./').filter(file => file.endsWith('.js') && file !== 'index.js');
+const commandFiles = fs.readdirSync('./').filter(file => file.endsWith('.js') && file !== 'index.js' && file !== 'deploy-commands.js');
 for (const file of commandFiles) {
   const command = require(`./${file}`);
-  if (command.name) {
+  // Skip empty files
+  if (Object.keys(command).length === 0) continue;
+  
+  // Handle new format (SlashCommandBuilder with data property)
+  if (command.data && command.data.name) {
+    client.commands.set(command.data.name, command);
+  }
+  // Handle old format (direct name property)
+  else if (command.name) {
     client.commands.set(command.name, command);
   }
 }
