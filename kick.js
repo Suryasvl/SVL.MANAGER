@@ -1,3 +1,4 @@
+
 module.exports = {
   name: "kick",
   description: "Kick a member from the server",
@@ -13,7 +14,7 @@ module.exports = {
     const member = interaction.options.getMember("user");
 
     if (!interaction.member.permissions.has("KickMembers")) {
-      return interaction.reply({ content: "❌ You don’t have permission to kick members.", ephemeral: true });
+      return interaction.reply({ content: "❌ You don't have permission to kick members.", ephemeral: true });
     }
 
     if (!member.kickable) {

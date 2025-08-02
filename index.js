@@ -33,7 +33,18 @@ client.on('interactionCreate', async interaction => {
   const command = client.commands.get(interaction.commandName);
   if (command) {
     try {
-      await command.executeSlash(interaction);
+      // Handle new format (data property with execute method)
+      if (command.execute) {
+        await command.execute(interaction);
+      }
+      // Handle old format (executeSlash method)
+      else if (command.executeSlash) {
+        await command.executeSlash(interaction);
+      }
+      // Handle kick.js format (run method)
+      else if (command.run) {
+        await command.run(client, interaction);
+      }
     } catch (error) {
       console.error(error);
       await interaction.reply({ content: '❌ There was an error.', ephemeral: true });
