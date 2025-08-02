@@ -1,3 +1,4 @@
+
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
@@ -9,6 +10,10 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
   async execute(interaction) {
+    if (!interaction.member.permissions.has('ManageMessages')) {
+      return interaction.reply({ content: '❌ You lack permission to use this command!', ephemeral: true });
+    }
+
     const msg = interaction.options.getString('text');
     await interaction.reply({ content: '✅ Sent!', ephemeral: true });
     await interaction.channel.send(msg);
